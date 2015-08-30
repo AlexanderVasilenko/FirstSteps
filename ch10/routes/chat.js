@@ -2,11 +2,11 @@ module.exports = function(app, models) {
   var io = require('socket.io');
   var utils = require('connect').utils;
   var cookie = require('cookie');
-  var Session = require('connect').middleware.session.Session;
+  var Session = require('connect').Session;
 
   var sio = io.listen(app.server)
 
-  sio.configure(function() {
+sio.set(function() {
     app.isAccountOnline = function(accountId) {
       var clients = sio.sockets.clients(accountId);
       return (clients.length > 0);

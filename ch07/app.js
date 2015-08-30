@@ -1,7 +1,7 @@
 var express     = require("express");
 var app         = express();
-var nodemailer  = require('nodemailer');
-var MemoryStore = require('connect').session.MemoryStore;
+//var nodemailer  = require('nodemailer');
+var MemoryStore = require('connect').MemoryStore;
 var dbPath      = 'mongodb://localhost/nodebackbone';
 
 // Import the data layer
@@ -12,10 +12,10 @@ var config = {
 
 // Import the models
 var models = {
-  Account: require('./models/Account')(config, mongoose, nodemailer)
+  Account: require('./models/Account')(config, mongoose)
 };
 
-app.configure(function(){
+app.get(function(){
   app.set('view engine', 'jade');
   app.use(express.static(__dirname + '/public'));
   app.use(express.limit('1mb'));
@@ -74,7 +74,7 @@ app.post('/register', function(req, res) {
 });
 
 app.get('/account/authenticated', function(req, res) {
-  if ( req.session.loggedIn ) {
+  if ( req.loggedIn ) {
     res.send(200);
   } else {
     res.send(401);
@@ -86,7 +86,7 @@ app.get('/accounts/:id/activity', function(req, res) {
                      ? req.session.accountId
                      : req.params.id;
   models.Account.findById(accountId, function(account) {
-    res.send(account.activity);
+    res.sendStatus(account.activity);
   });
 });
 
